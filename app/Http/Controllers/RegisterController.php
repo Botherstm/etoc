@@ -24,7 +24,7 @@ class RegisterController extends Controller
         ]);
 
         $validateData['password'] = Hash::make($validateData['password']);
-
+        $validateData['progres']=1;
         User::create($validateData);
 
         return \redirect('/login')->with('success', 'Registration succsessful,! Please login');
