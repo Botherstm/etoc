@@ -39,15 +39,15 @@ use App\Models\Start_uts;
 |
 */
 
-Route::get('/',[PostinganController::class,'index',])->middleware(['auth', 'verified']);
+Route::get('/',[PostinganController::class,'index',])->middleware(['auth']);
 // Route::get('/materi',[PostController::class,'index',])->middleware(['auth', 'verified'])->name('post.index');
-Route::get('/daftar/materi', [PostmateriController::class,'index',])->middleware(['auth', 'verified']);;
-Route::get('/posts/{materi_id}', [PostController::class, 'index'])->middleware(['auth', 'verified']);
+Route::get('/daftar/materi', [PostmateriController::class,'index',])->middleware(['auth']);;
+Route::get('/posts/{materi_id}', [PostController::class, 'index'])->middleware(['auth']);
 // Route::get('/layouts/post/{post:id}',[PostController::class,'show',])
 //     ->middleware('check.post.progress')
 //     ->name('materi.show');
 Route::resource('/dashboard/tugas', TugasController::class)->middleware(['auth']);
-Route::resource('/dashboard/tugasjawab', TugasjawabController::class)->middleware(['auth', 'verified']);
+Route::resource('/dashboard/tugasjawab', TugasjawabController::class)->middleware(['auth']);
 Route::post('/tasks/store', [TugasjawabController::class, 'store'])->name('tasks.store')->middleware(['auth']);
 Route::get('/tugas/{tugas}/toggle-gambar', [TugasController::class, 'toggleGambar'])->name('tugas.toggle-gambar')->middleware(['auth']);
 Route::get('/tugas/{tugas}/toggle-video', [TugasController::class, 'toggleVideo'])->name('tugas.toggle-video')->middleware(['auth']);
