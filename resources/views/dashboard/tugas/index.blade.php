@@ -173,7 +173,8 @@
             </div>
         @endif
     <div class="table-responsive col-lg-12">
-        <button class="btn btn-dark mb-2" onclick="openFormmateri()">Tambahkan Materi Baru</button>
+        <a href="/dashboard/tugas/create"><button class="btn btn-dark mb-2" >Tambahkan Materi Baru</button></a>
+        
         @if ($tugas->count())
         <div class="table table-striped table-sm pb-5">
             <table>
@@ -196,39 +197,40 @@
                         <td>{{ $mat->soal }}</td>
                         <td>{{ $mat->materi->title }}</td>
                         <td>
-                            <div class="text-container{{ $mat->text ? ' animate' : '' }}" data-tugas-id="{{ $mat->id }}">
+                            <div class="text-container{{ $mat->text_active ? ' animate' : '' }}" data-tugas-id="{{ $mat->id }}">
                                 <label class="toggle-button">
-                                    <input type="checkbox" class="text-toggle" data-tugas-id="{{ $mat->id }}" {{ $mat->text ? 'checked' : '' }}>
+                                    <input type="checkbox" class="text-toggle" data-tugas-id="{{ $mat->id }}" {{ $mat->text_active ? 'checked' : '' }}>
                                     <span class="slider"></span>
                                 </label>
                             </div>
                         </td>
                         <td>
-                            <div class="gambar-container{{ $mat->gambar ? ' animate' : '' }}" data-tugas-id="{{ $mat->id }}">
+                            <div class="gambar-container{{ $mat->gambar_active ? ' animate' : '' }}" data-tugas-id="{{ $mat->id }}">
                                 <label class="toggle-button">
-                                    <input type="checkbox" class="gambar-toggle" data-tugas-id="{{ $mat->id }}" {{ $mat->gambar ? 'checked' : '' }}>
+                                    <input type="checkbox" class="gambar-toggle" data-tugas-id="{{ $mat->id }}" {{ $mat->gambar_active ? 'checked' : '' }}>
                                     <span class="slider"></span>
                                 </label>
                             </div>
                         </td>
                         <td>
-                            <div class="video-container{{ $mat->video ? ' animate' : '' }}" data-tugas-id="{{ $mat->id }}">
+                            <div class="video-container{{ $mat->video_active ? ' animate' : '' }}" data-tugas-id="{{ $mat->id }}">
                                 <label class="toggle-button">
-                                    <input type="checkbox" class="video-toggle" data-tugas-id="{{ $mat->id }}" {{ $mat->video ? 'checked' : '' }}>
+                                    <input type="checkbox" class="video-toggle" data-tugas-id="{{ $mat->id }}" {{ $mat->video_active ? 'checked' : '' }}>
                                     <span class="slider"></span>
                                 </label>
                             </div>
                         </td>
                         <td>
-                            <div class="pdf-container{{ $mat->pdf ? ' animate' : '' }}" data-tugas-id="{{ $mat->id }}">
+                            <div class="pdf-container{{ $mat->pdf_active ? ' animate' : '' }}" data-tugas-id="{{ $mat->id }}">
                                 <label class="toggle-button">
-                                    <input type="checkbox" class="pdf-toggle" data-tugas-id="{{ $mat->id }}" {{ $mat->pdf ? 'checked' : '' }}>
+                                    <input type="checkbox" class="pdf-toggle" data-tugas-id="{{ $mat->id }}" {{ $mat->pdf_active ? 'checked' : '' }}>
                                     <span class="slider"></span>
                                 </label>
                             </div>
                         </td>
                         <td>
-                            <button class="btn bg-transparent" onclick="openFormupdate({{ $mat->id }}, '{{ $mat->soal }}','{{$mat->materi_id}}')"><i class="bi bi-pencil-square text-success  p-1 mx-1"></i></button>
+                            <a href="/dashboard/tugas/{{ $mat->id }}/edit"><button class="btn bg-transparent"><i class="bi bi-pencil-square text-success  p-1 mx-1"></i></button></a>
+                            
                             <form action="" method="POST" class="d-inline">
                                 @method('delete')
                                 @csrf
@@ -245,58 +247,15 @@
         <p>belum ada data tugas</p>
     @endif
 
-{{-- TODO --}}
-
-
-        <div class="form-popup" id="myForm">
-            <form action="/dashboard/tugas" method="POST" class="form-container">
-            @csrf
-            <h1>Tambah Soal Tugas</h1>
-            <label for="edit-soal"><b>Title</b></label>
-            <input type="text" placeholder="Enter the soal" id="edit-soal" name="soal" required>
-            
-                    <div class="form-group">
-                        <label for="materi_id" class="form-label"><b>Judul Materi</b></label>
-                        <select class="form-select form-select-lg" name="materi_id">
-                            @foreach ($materi as $mat)
-                                @if (old('materi_id') == $mat->id)
-                                <option value="{{ $mat->id }}" selected>{{ $mat->title }}</option>
-                                @else
-                                <option value="{{ $mat->id }}">{{ $mat->title }}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                    </div>
-            <!-- Tambahkan field lainnya sesuai kebutuhan -->
-            <button type="submit" class="btn">Tambah</button>
-            <button type="button" class="btn cancel" onclick="closeFormmateri()">Close</button>
-            </form>
-        </div>
-
-{{-- edit --}}
-        <div class="form-popup" id="update">
-            <form action="" method="POST" class="form-container">
-            @csrf
-            @method('PUT')
-            <h1>Edit Data Materi</h1>
-
-            <input type="hidden" id="edit-id" name="id" value="">
-            
-            <label for="edit-title"><b>Title</b></label>
-            <input type="text" placeholder="Enter the title" id="edit-title" name="title" required>
-
-            <!-- Tambahkan field lainnya sesuai kebutuhan -->
-
-            <button type="submit" class="btn">Update</button>
-            <button type="button" class="btn cancel" onclick="closeFormupdate()">Close</button>
-            </form>
-        </div>
-        
-    </div>
-    
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-        
+        function openFormTambah() {
+            document.getElementById("myForm").style.display = "none";
+        }
+
+        function closeFormTambah() {
+            document.getElementById("myForm").style.display = "none";
+        }
          $(document).ready(function () {
             $('.gambar-toggle').on('change', function () {
                 var tugasId = $(this).data('tugas-id');
@@ -407,14 +366,8 @@
             document.getElementById("update").style.display = "block";
         }
         function closeFormupdate() {
-            document.getElementById("myForm").style.display = "none";
-        }
-        function openFormmateri() {
             document.getElementById("form-update").style.display = "none";
         }
 
-        function closeFormmateri() {
-            document.getElementById("myForm").style.display = "none";
-        }
     </script>
 @endsection

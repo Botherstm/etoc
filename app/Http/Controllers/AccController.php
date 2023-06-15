@@ -14,7 +14,7 @@ class AccController extends Controller
     public function index()
     {
         return view('dashboard.mahasiswa.index',[
-            'post'=>User::all()
+            'post'=>User::orderByRaw("is_admin DESC")->get(),
         ]);
     }
 
@@ -61,17 +61,33 @@ class AccController extends Controller
         }
 
         $user->acc = $request->acc;
+        $user->is_admin = $request->is_admin;
 
         $user->save();
         return redirect()->back()->with('success', 'Status Akun Telah Diperbaharui');
     }
+
+    public function updateadmin(Request $request, User $user, string $id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return redirect()->back()->with('error', 'User not found.');
+        }
+
+        $user->is_admin = $request->is_admin;
+
+        $user->save();
+        return redirect()->back()->with('success', 'Status Akun Telah Diperbaharui');
+    }
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(User $user)
     {
-        //
+        User::destroy($user->id);
+        return redirect()->back()->with('success', 'Data Telah dihapus');
     }
 
     public function deleteAllExceptAdmin()

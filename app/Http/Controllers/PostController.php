@@ -50,15 +50,15 @@ class PostController extends Controller
             $uas= $uass->active;
             $user= Auth::user();
             $userId = $user->id;
-            $jawaban = Tugasjawab::where('user_id', $userId)->where('materi_id', $materi_id)->get();
+            $jawaban = Tugasjawab::where('user_id', $userId)->where('materi_id', $materi_id)->first();
             $userCount = Tugasjawab::where('user_id', $userId)->count();
             $tugas = Tugas::where('materi_id', $materi_id)->get();
             $posts = Post::where('materi_id', $materi_id)->get();
             $materi= Post::where('materi_id', $materi_id)->first();
-            $gambar = Tugas::where('materi_id', $materi_id)->where('gambar', true)->get();
-            $video = Tugas::where('materi_id', $materi_id)->where('video', true)->get();
-            $pdf = Tugas::where('materi_id', $materi_id)->where('pdf', true)->get();
-            $text = Tugas::where('materi_id', $materi_id)->where('text', true)->get();
+            $gambar = Tugas::where('materi_id', $materi_id)->where('gambar_active', true)->get();
+            $video = Tugas::where('materi_id', $materi_id)->where('video_active', true)->get();
+            $pdf = Tugas::where('materi_id', $materi_id)->where('pdf_active', true)->get();
+            $text = Tugas::where('materi_id', $materi_id)->where('text_active', true)->get();
             return view('layouts.post.index', [
                 'post' => $posts,
                 'hidup'=>$actives,

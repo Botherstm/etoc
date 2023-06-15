@@ -109,8 +109,8 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $mat->title }}</td>
                         <td>
-                            <button class="btn bg-transparent" onclick="openFormjudul({{ $mat->id }}, '{{ $mat->title }}')"><i class="bi bi-pencil-square text-success  p-1 mx-1"></i></button>
-                            <form action="" method="POST" class="d-inline">
+                            <a href="/dasboard/materi/{{$mat->id}}/edit"><button class="btn bg-transparent"><i class="bi bi-pencil-square text-success  p-1 mx-1"></i></button></a>
+                            <form action="/dasboard/materi/{{$mat->id}}" method="POST" class="d-inline">
                                 @method('delete')
                                 @csrf
                                 <button class="badge border-0" onclick="return confirm('Are You Sure?')"><i class="bi bi-x-circle-fill text-danger p-1 mx-1"></i></button>
@@ -122,22 +122,6 @@
             </tbody>
         </table>
 </div>
-
- <div class="form-popup" id="myForm">
-    <form action="{{ route('judul.materi.update', $mat->id) }}" method="POST" class="form-container">
-      @csrf
-      @method('PUT')
-      <h1>Edit Data Materi</h1>
-      <input type="hidden" id="edit-id" name="id" value="">
-      <label for="edit-title"><b>Title</b></label>
-      <input type="text" placeholder="Enter the title" id="edit-title" name="title" required>
-
-      <!-- Tambahkan field lainnya sesuai kebutuhan -->
-
-      <button type="submit" class="btn">Update</button>
-      <button type="button" class="btn cancel" onclick="closeFormjudul()">Close</button>
-    </form>
-  </div>
 
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">Daftar Sub Materi</h1>

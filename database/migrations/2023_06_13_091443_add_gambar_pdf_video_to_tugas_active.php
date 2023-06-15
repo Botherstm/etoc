@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tugas', function (Blueprint $table) {
-            $table->string('gambar')->nullable();
-            $table->string('pdf')->nullable();
-            $table->string('video')->nullable();
+            $table->boolean('gambar_active')->default(false);
+            $table->boolean('pdf_active')->default(false);
+            $table->boolean('video_active')->default(false);
+            $table->boolean('text_active')->default(false);
         });
     }
 

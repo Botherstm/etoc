@@ -108,15 +108,30 @@ footer {
     <div class="bg-light pb-5">
             <header>
                 <h1 >{{$post->judul}}</h1>
+            @if ($post->video)
+            <video src="{{ asset('storage/' . $post->video) }}" controls></video>
+            @else
+                
+            @endif
                 <video src="{{ asset('storage/' . $post->video) }}" controls></video>
             </header>
+            @if ($post->isi)
             <section >
                 <h2>Penjelasan</h2>
                 <p>{!! $post->isi !!}</p>
             </section>
+            @else
+                
+            @endif
+
+            @if ($post->pdf)
             <footer>
-                <a href="materi.pdf" download class="download-button">Download Materi</a>
+                <a href="{{ asset('storage/' . $post->pdf) }}" download class="download-button">Download Materi</a>
             </footer>
+            @else
+                
+            @endif
+
 
 
 {{-- 

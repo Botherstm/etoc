@@ -105,10 +105,12 @@ button[type="submit"]:hover {
                         <th scope="col">no</th>
                         <th scope="col">Nama Mahasiswa</th>
                         <th scope="col">status & Tindakan</th>
+                        <th scope="col">Admin</th>
+                        <th scope="col">Hapus Akun</th>
                         </tr>
                     </thead>
                     <tbody>
-                    @foreach ($post->skip(1) as $po)
+                    @foreach ($post as $po)
                     <tr class="slide-in-left">
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $po->name }}</td>
@@ -121,19 +123,37 @@ button[type="submit"]:hover {
                             <a href="#" class="btn btn-success" onclick="openForm()">Diterima</a>
                         </td>
                     @endif
+                    @if ($po->is_admin != true)
+                        <td>
+                            <a href="#" class="btn btn-outline-warning" onclick="openFormAdmin()">Bukan Admin</a>
+                        </td>
+                    @else
+                        <td>
+                            <a href="#" class="btn btn-success" onclick="openFormAdmin()">Admin</a>
+                        </td>
+                    @endif
+                    <td>
+                        <form action="{{ route('users.destroy', $po->id) }}" method="POST" class="d-inline">
+                            @method('delete')
+                            @csrf
+                            <button class="badge border-0" onclick="return confirm('Are You Sure?')"><i class="bi bi-x-circle-fill text-danger p-1 mx-1"></i></button>
+                        </form>
+                    </td>
                     </tr>
+
                     @endforeach
                     </tbody>
                 </table>
             </div>
 
-            <div id="myModal" class="modal justify-content-center">
+                <div id="myModal" class="modal justify-content-center">
                     <div class="modal-content col-md-6 ">
                         <span class="close" onclick="closeForm()">&times;</span>
                         <h2>Ubah status Akun Mahasiswa</h2>
                         <form action="/dashboard/mahasiswa/{{$po->id}}" id="update_user" class="update_user" method="post">
                             @method('put')
                             @csrf
+                            <input type="text" name="acc" hidden id="acc" value="{{$po->is_admin}}">
                             <div class="form-group">
                                 <div class="dropdown">
                                 <div class="form-group">
@@ -146,6 +166,31 @@ button[type="submit"]:hover {
                             </div>
                             </div>
                             <button type="submit" class="btn btn-primary" onclick="return confirmupdate()">Simpan</button>
+                        </form>
+                        </div>
+                </div>
+
+
+                <div id="myModals" class="modal justify-content-center">
+                    <div class="modal-content col-md-6 ">
+                        <span class="close" onclick=" closeFormAdmin()">&times;</span>
+                        <h2>Jadikan Admin?</h2>
+                        <form action="/dashboard/mahasiswa/{{$po->id}}" id="update_admin" class="update_admin" method="post">
+                            @method('put')
+                            @csrf
+                            <input type="text" name="acc" hidden id="acc" value="{{$po->acc}}">
+                            <div class="form-group">
+                                <div class="dropdown">
+                                <div class="form-group">
+                                    <select id="dropdown" name="is_admin" id="is_admin">
+                                        <option value="{{$po->is_admin}}">Pilih !</option>
+                                        <option value="1"><div class="btn btn-success">YA !</div></option>
+                                        <option value="0"><div class="btn btn-success">Tidak!</div></option>
+                                    </select>
+                                </div>
+                            </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary" onclick="return confirmadmin()">Simpan</button>
                         </form>
                         </div>
                 </div>
@@ -176,7 +221,7 @@ button[type="submit"]:hover {
     function confirmupdate() {
         Swal.fire({
             title: 'Konfirmasi',
-            text: 'Apakah Anda yakin akan mengubah status Akun ?',
+            text: 'Apakah Anda yakin akan mengubah status Akun menjadi admin/tidak ?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -191,12 +236,39 @@ button[type="submit"]:hover {
 
         return false;
     }
+
+    function confirmadmin() {
+        Swal.fire({
+            title: 'Konfirmasi',
+            text: 'Apakah Anda yakin akan mengubah status Akun ?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, ubah!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('update_admin').submit();
+            }
+        });
+
+        return false;
+    }
         function openForm() {
             document.getElementById("myModal").style.display = "block";
         }
 
         function closeForm() {
             document.getElementById("myModal").style.display = "none";
+        }
+
+        function openFormAdmin() {
+            document.getElementById("myModals").style.display = "block";
+        }
+
+        function closeFormAdmin() {
+            document.getElementById("myModals").style.display = "none";
         }
 
         function changeFormContent(color) {

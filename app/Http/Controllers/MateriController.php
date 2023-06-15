@@ -66,31 +66,27 @@ class MateriController extends Controller
      */
     public function edit(Materi $materi)
     {
-        //
+        return view('dashboard.post.materi',[
+            'materi'=> $materi,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-     public function update(Request $request, $id)
+     public function update(Request $request, Materi $materi)
     {
         // Validasi data yang diterima dari form
-        $validatedData = $request->validate([
-            'title' => 'required|max:255',
-            // Tambahkan validasi untuk field lainnya di sini
-        ]);
+        $rules=[
+            'title'=> 'required',
+        ];
+        
+        $validateData = $request->validate($rules);
 
-        // Cari data Materi berdasarkan ID
-        $materi = Materi::findOrFail($id);
-
-        // Update data Materi dengan data baru
-        $materi->title = $validatedData['title'];
-        // Setel field lainnya sesuai kebutuhan
-
-        $materi->save();
+        Materi::where('id',$materi->id)->update($validateData);
 
         // Redirect ke halaman yang tepat atau tampilkan pesan sukses
-        return redirect()->back()->with('success', 'Data materi berhasil diupdate!');
+        return redirect('/dashboard/post')->with('success', 'Data materi berhasil diupdate!');
     }
 
     /**
@@ -98,6 +94,7 @@ class MateriController extends Controller
      */
     public function destroy(Materi $materi)
     {
-        //
+        Materi::destroy($materi->id);
+        return redirect('/dashboard/post')->with('danger', 'Data telah di Hapus!');
     }
 }

@@ -39,14 +39,23 @@
         margin-top: 20px;
     }
 </style>
+            @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Materi</h1>
+        <h1 class="h2">Tambah Tugas</h1>
     </div>
     <div class="col-lg-8">
-        <form method="POST" action="/dashboard/post" class="mb-5 videoForm" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('tugas.store') }}" class="mb-5 videoForm" enctype="multipart/form-data">
             @csrf
-            <div class="mb-3">
-                <label for="materi_id" class="form-label">Judul Materi</label>
+            <div class="form-group">
+                <label for="materi_id" class="form-label">Materi</label>
                 <select class="form-select form-select-sm" name="materi_id">
                     @foreach ($materi as $mat)
                         @if (old('materi_id') == $mat->id)
@@ -58,11 +67,11 @@
                 </select>
             </div>
             <div class="mb-3">
-                <label for="judul" class="form-label">Judul Sub Materi</label>
-                <input type="text" class="form-control @error('judul')
+                <label for="soal" class="form-label">Soal Tugas</label>
+                <textarea  name="soal" id="soal" cols="30" rows="10" class="form-control @error('soal')
                     is-invalid
-                @enderror" id="judul" name="judul" required autofocus value="{{ old('judul') }}">
-                @error('judul')
+                @enderror" autofocus ></textarea>
+                @error('soal')
                     <div class="invalid-feedback">
                         {{ $message }}
                     </div>
@@ -70,8 +79,8 @@
             </div>
 
             <div class="form-group pt-3">
-                <label for="pdf">Masukan PDF materi :</label>
-                    <input type="file" required class="form-control @error('pdf') is-invalid @enderror" id="pdf" name="pdf">
+                <label for="pdf">Masukan PDF Soal:</label>
+                    <input type="file"  class="form-control @error('pdf') is-invalid @enderror" id="pdf" name="pdf"  value="{{ old('pdf') }}">
                 @error('pdf')
                     <div class="invalid-feedback">
                         {{ $message }}
@@ -79,8 +88,8 @@
                 @enderror
             </div>
             <div class="form-group pt-3">
-                <label for="video">Masukan Video materi : </label>
-                    <input type="file" required class="form-control @error('video') is-invalid @enderror" id="video" name="video">
+                <label for="video">Masukan Video Soal : </label>
+                    <input type="file"  class="form-control @error('video') is-invalid @enderror" id="video" name="video"  value="{{ old('video') }}">
                 @error('video')
                     <div class="invalid-feedback">
                         {{ $message }}
@@ -92,7 +101,7 @@
                 <label for="video" class="form-label">Link Video Materi</label>
                 <input type="text" class="form-control @error('video')
                     is-invalid
-                @enderror" id="video" name="video" required autofocus value="{{ old('video') }}">
+                @enderror" id="video" name="video"  autofocus value="{{ old('video') }}">
                 @error('video')
                     <div class="invalid-feedback">
                         {{ $message }}
@@ -102,30 +111,18 @@
 
 
             <div class="mb-3">
-                <label for="gambar" class="form-label">Foto Tumbnail</label>
+                <label for="gambar" class="form-label">Tambahkan Foto</label>
                 <img src="" alt="" class="img-preview img-fluid mb-3 col-sm-5">
                 <input class="form-control @error('gambar')
                     is-invalid
-                @enderror" type="file" id="gambar" name="gambar" onchange="previewImage()">
+                @enderror" type="file" id="gambar" name="gambar" onchange="previewImage()"  value="{{ old('gambar') }}">
                 @error('gambar')
                     <div class="invalid-feedback">
                         {{ $message }}
                     </div>
                 @enderror
             </div>
-
-            <div class="mb-3">
-                <label for="isi" class="form-label">Penjelasan Materi</label>
-                @error('isi')
-                    <p class="text-danger">{{ $message }}</p>
-                @enderror
-                <input id="isi" type="hidden" name="isi" value="{{ old('isi') }}">
-                <trix-editor input="isi"></trix-editor>
-            </div>
-
-            <div class="justify-content-center">
-                <button type="submit" class="btn btn-dark d-block justify-content-center">Tambah Materi</button>
-            </div>
+            <button type="submit" class="btn btn-dark d-block justify-content-center">Tambah Materi</button>
         </form>
         <div id="loadingOverlay" class="loading-overlay">
                 <div class="loading-spinner"></div>

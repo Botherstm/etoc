@@ -316,6 +316,7 @@
             }
         }
             
+        
         </style>
         <div class="">
             @if (session('success'))
@@ -424,15 +425,74 @@
                     @else
                         <p>belum ada sub materi dibuat</p>
                     @endif
-        <div class="question-container d-block">
-            <div class="question" id="question">
-                <h3>Tugas :</h3>
-                @foreach ($tugass as $tugas)
-                    <p>{{ $loop->iteration }}. {{$tugas->soal}}</p>
-                @endforeach
-                <button class="btn btn-dark mb-2" onclick="openForm()">Kirim Jawaban</button>
+        @if ($tugass->count())
+            <div class="question-container d-block">    
+                <div class="question" id="question">
+                    <h3>Tugas :</h3>
+                    @foreach ($tugass as $tugas)
+                        <p>{{ $loop->iteration }}. {{$tugas->soal}}</p>
+                        @if ($tugas->gambar != null)
+                            <img src="{{ asset('storage/'.$tugas->gambar) }}" alt="" class="img-preview img-fluid mb-1 col-sm-5">
+                        @endif
+                            @if ($tugas->video)
+                                <div class="pb-1">
+                                    <h5>video :</h5>
+                                    <video id="video-preview" width="100%" height="200px" controls>
+                                        <source src="{{ asset('storage/'.$tugas->video) }}" type="video/mp4">
+                                    </video>
+                                </div>
+                            @endif
+                            @if ($tugas->pdf)
+                                <div class="pb-3">
+                                    <h5>pdf :</h5>
+                                    <a href="{{ asset('storage/'.$tugas->pdf) }}"> <button class="btn btn-outline-dark">Download</button></a>
+
+                                </div>
+                            @endif
+                    @endforeach
+                    {{-- jawaban --}}
+                    @if ($jawaban != null)
+                        <h4 class="pt-5">Jawaban :</h4>
+                        <div class="">
+                            @if ($jawaban->text)
+                            <h5 class="pb-3">
+                                {{$jawaban->text}}
+                            </h5>
+                            @endif
+                            @if ($jawaban->gambar)
+                            <div class="mb-3">
+                                <h5>gambar :</h5>
+                                <img id="image-preview" src="{{ asset('storage/' . $jawaban->gambar) }}" width="100%" height="50%">
+                            </div>
+                            @endif
+                            @if ($jawaban->pdf)
+                                <div class="pb-3">
+                                    <h5>pdf :</h5>
+                                    <p><a href="{{ asset('storage/' . $jawaban->pdf) }}"><button class="btn btn-primary">Download</button></a></p>
+                                </div>
+                            @endif
+                            @if ($jawaban->video)
+                                <div class="pb-5">
+                                    <h5>video :</h5>
+                                    <video id="video-preview" width="100%" height="200px" controls>
+                                        <source src="{{ asset('storage/'.$jawaban->video) }}" type="video/mp4">
+                                    </video>
+                                </div>
+                            @endif
+                        </div>
+                    <button class="btn btn-success" onclick="openFormtugas()">Edit Jawaban</button>
+                    @else
+                        <button class="btn btn-dark mb-2" onclick="openForm()">Kirim Jawaban</button>
+                    @endif
+
+                </div>
             </div>
-        </div>
+        @else
+            
+        @endif
+    
+        <!-- Modal pop-up untuk edit jawaban -->
+
 
     <div class="overlay" id="overlay">
         <div class="form-container">
@@ -478,6 +538,7 @@
                 </form>
             </div>
         </div>
+        
             {{-- <button type="button" class="btn" onclick="submitForm()">Ya</button>
             <button type="button" class="btn" onclick="closeForm()">Tidak</button>
         </div> --}}
@@ -486,7 +547,256 @@
 
     
 
+                        
+<style>
+        /* Style for modal container */
+        
+        /* Styling for modal container */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Styling for modal content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 4px;
+            position: relative;
+            animation-name: modal-animation;
+            animation-duration: 0.3s;
+        }
+
+        /* Animation for modal */
+        @keyframes modal-animation {
+            from {
+                top: -200px;
+                opacity: 0;
+            }
+            to {
+                top: 0;
+                opacity: 1;
+            }
+        }
+
+        /* Styling for close button */
+        .close {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Styling for form fields */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="file"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            resize: vertical;
+        }
+
+        /* Styling for image, PDF, and video preview */
+        
+        .image-preview-container,
+        .pdf-preview-container,
+        .video-preview-container {
+            margin-top: 10px;
+            max-width: 100%;
+            max-height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .image-preview-container img,
+        .pdf-preview-container embed,
+        .video-preview-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+
+        /* Styling for submit button */
+
+        .btn:hover {
+            background-color: #5e04bd;
+        }
+    </style>
+        
+
+        @if ($jawaban != null)
+            <div class="form-popup" id="editForm">
+                <div class="modal-content">
+                    <span class="close" onclick="closeFormtugas()">&times;</span>
+
+                    <form action="/dashboard/tugasjawab/{{$jawaban->id}}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @method('put')
+                        <div class="form-group">
+                            <label for="text">Text:</label>
+                            <textarea name="text" id="text" rows="4">{{ $jawaban->text }}</textarea>
+                        </div>
+                        @if ($jawaban->gambar)
+                            <div class="form-group">
+                                <input type="hidden" name="oldGambar" value="{{ $jawaban->gambar }}">
+                                <label for="gambar" class="form-label">Gambar</label>
+                                <input class="form-control @error('gambar')
+                                    is-invalid
+                                @enderror" type="file" id="gambar" name="gambar" onchange="previewImage()">
+                                @error('gambar')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        @endif
+                        
+                        @if ($jawaban->pdf)
+                            <div class="form-group">
+                                <label for="pdf" class="form-label">Pdf</label>
+                                <input type="hidden" name="oldPdf" value="{{ $jawaban->pdf }}">
+                                @if ($jawaban->pdf)
+                                    <p><a href="{{ asset('storage/' . $jawaban->pdf) }}"><button class="btn btn-primary">Download</button></a></p>
+                                @else
+                                    <embed  type="application/pdf" class="pdf-preview img-fluid"  width="100%" height="300px">
+                                @endif
+                                <input class="form-control @error('pdf')
+                                    is-invalid
+                                @enderror" type="file" id="pdf" name="pdf" onchange="previewPdf()">
+                                @error('pdf')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        @endif
+
+                        @if ($jawaban->video)
+                            <div class="form-group">
+                            <label for="video" class="form-label">Video</label>
+                            <input type="hidden" name="oldVideo" value="{{ $jawaban->video }}">
+                            <input class="form-control @error('video')
+                                is-invalid
+                            @enderror" type="file" id="video" name="video"  onchange="previewVideo()">
+                            @error('video')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+
+                        @endif
+                        
+
+                        <div class="form-group">
+                            <button type="submit" class="btn">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        @else
+            
+        @endif
+    
+
+
     <script>
+
+
+         function previewImage(){
+            const image=document.querySelector('#gambar');
+            const imgPreview=document.querySelector('.img-preview');
+
+            imgPreview.style.display = 'block';
+
+            const oFReader = new FileReader();
+            oFReader.readAsDataURL(image.files[0]);
+
+            oFReader.onload = function (oFREvent){
+                imgPreview.src = oFREvent.target.result;
+            }
+        }
+
+        function previewPdf(){
+            const image=document.querySelector('#pdf');
+            const imgPreview=document.querySelector('.pdf-preview');
+
+            imgPreview.style.display = 'block';
+
+            const oFReader = new FileReader();
+            oFReader.readAsDataURL(image.files[0]);
+
+            oFReader.onload = function (oFREvent){
+                imgPreview.src = oFREvent.target.result;
+            }
+        }
+
+        function previewVideo(){
+            const image=document.querySelector('#video');
+            const imgPreview=document.querySelector('.video-preview');
+
+            imgPreview.style.display = 'block';
+
+            const oFReader = new FileReader();
+            oFReader.readAsDataURL(image.files[0]);
+
+            oFReader.onload = function (oFREvent){
+                imgPreview.src = oFREvent.target.result;
+            }
+        }
+
+       
+
+        // Function to open the form pop-up
+        function openFormtugas() {
+            document.getElementById("editForm").style.display = "block";
+        }
+        
+        // Function to close the form pop-up
+        function closeFormtugas() {
+            document.getElementById("editForm").style.display = "none";
+        }
+
+
         function openForm() {
             document.getElementById('overlay').style.display = 'flex';
         }
@@ -524,7 +834,7 @@
         @push('styles')
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
         @endpush
-
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         @push('scripts')
         <script>
         function previewImage(){

@@ -7,6 +7,7 @@ use App\Models\Tugas;
 use App\Http\Requests\StoreTugasRequest;
 use App\Http\Requests\UpdateTugasRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class TugasController extends Controller
 {
@@ -26,7 +27,9 @@ class TugasController extends Controller
      */
     public function create()
     {
-        return view('materis.create');
+        return view('dashboard.tugas.create',[
+            'materi'=>Materi::all(),
+        ]);
     }
 
     /**
@@ -34,15 +37,24 @@ class TugasController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'soal' => 'required|max:255',
-            'materi_id' => 'required',
+        $validateData = $request->validate([
+            'soal'=>'required|max:255',
+            'materi_id'=> 'required',
+            'pdf'=>'mimes:doc,docx,pdf',
+            'video'=>'mimes:mp4,ogx,oga,ogv,webm,ogg,mkv',
+            'gambar'=>'image|file|max:6024',
         ]);
-
-        Tugas::create($request->all());
-
-        return back()->with('success', 'Tugas berhasil ditambahkan.');
-
+        if($request->file('pdf')){
+            $validateData['pdf'] = $request->file('pdf')->store('pdf');
+        }
+        if($request->file('gambar')){
+            $validateData['gambar'] = $request->file('gambar')->store('gambar');
+        }
+        if($request->file('video')){
+            $validateData['video'] = $request->file('video')->store('video');
+        }
+        Tugas::create($validateData);
+        return redirect('/dashboard/tugas')->with('success', 'Tugas berhasil ditambahkan.');
     }
 
     /**
@@ -56,9 +68,13 @@ class TugasController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Tugas $tugas)
+    public function edit($id)
     {
-        //
+        $tugas = Tugas::findOrFail($id);
+        return view('dashboard.tugas.edit',[
+            'materi'=>Materi::all(),
+            'tugas'=>$tugas
+        ]);
     }
 
     /**
@@ -66,13 +82,35 @@ class TugasController extends Controller
      */
     public function update(Request $request, Tugas $tugas)
     {
-         $request->validate([
-            'judul' => 'required',
-            'deskripsi' => 'required',
-        ]);
-        $tugas->update($request->all());
-        return redirect()->route('tugas.index')
-            ->with('success', 'Tugas berhasil diperbarui.');
+        $rules=[
+            'soal'=>'required|max:255',
+            'materi_id'=> 'required',
+            'pdf'=>'mimes:doc,docx,pdf',
+            'video'=>'mimes:mp4,ogx,oga,ogv,webm,ogg,mkv',
+            'gambar'=>'image|file|max:6024',
+        ];
+        $validateData = $request->validate($rules);
+        if($request->file('pdf')){
+            if($request->oldPdf){
+                Storage::delete($request->oldPdf);
+            }
+            $validateData['pdf'] = $request->file('pdf')->store('pdf');
+        }
+        if($request->file('gambar')){
+            $validateData['gambar'] = $request->file('gambar')->store('gambar');
+            if($request->oldgambar){
+                Storage::delete($request->oldGambar);
+            }
+        }
+        if($request->file('video')){
+            if($request->oldvideo){
+                Storage::delete($request->oldVideo);
+            }
+            $validateData['video'] = $request->file('video')->store('video');
+        }
+
+        Tugas::where('id',$tugas->id)->update($validateData);
+        return redirect('/dashboard/tugas')->with('success', 'Tugas berhasil diperbarui.');
     }
 
     /**
@@ -88,7 +126,7 @@ class TugasController extends Controller
 
     public function toggleGambar(Request $request, Tugas $tugas)
     {
-        $tugas->gambar = !$tugas->gambar;
+        $tugas->gambar_active = !$tugas->gambar_active;
         $tugas->save();
 
         return response()->json([
@@ -98,7 +136,7 @@ class TugasController extends Controller
 
     public function toggleVideo(Request $request, Tugas $tugas)
     {
-        $tugas->video = !$tugas->video;
+        $tugas->video_active = !$tugas->video_active;
         $tugas->save();
 
         return response()->json([
@@ -108,7 +146,7 @@ class TugasController extends Controller
 
     public function togglePDF(Request $request, Tugas $tugas)
     {
-        $tugas->pdf = !$tugas->pdf;
+        $tugas->pdf_active = !$tugas->pdf_active;
         $tugas->save();
 
         return response()->json([
@@ -117,7 +155,7 @@ class TugasController extends Controller
     }
     public function toggleText(Tugas $tugas)
     {
-        $tugas->text = !$tugas->text;
+        $tugas->text_active = !$tugas->text_active;
         $tugas->save();
 
         return response()->json([

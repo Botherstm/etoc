@@ -9,8 +9,6 @@ class Materi extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    protected $materi = ['id'];
-    
     protected $fillable = ['tille'];
     public function materi()
     {

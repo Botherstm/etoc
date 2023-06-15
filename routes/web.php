@@ -48,6 +48,9 @@ Route::get('/posts/{materi_id}', [PostController::class, 'index'])->middleware([
 //     ->name('materi.show');
 Route::resource('/dashboard/tugas', TugasController::class)->middleware(['auth']);
 Route::resource('/dashboard/tugasjawab', TugasjawabController::class)->middleware(['auth']);
+// routes/web.php
+Route::post('/dashboard/tugas', [TugasController::class, 'store'])->name('tugas.store')->middleware(['auth']);
+
 Route::post('/tasks/store', [TugasjawabController::class, 'store'])->name('tasks.store')->middleware(['auth']);
 Route::get('/tugas/{tugas}/toggle-gambar', [TugasController::class, 'toggleGambar'])->name('tugas.toggle-gambar')->middleware(['auth']);
 Route::get('/tugas/{tugas}/toggle-video', [TugasController::class, 'toggleVideo'])->name('tugas.toggle-video')->middleware(['auth']);
@@ -59,10 +62,11 @@ Route::get('/materi/{id}', [PostController::class,'show',])
     ->name('materi.show')->middleware(['auth']);
 Route::get('/materi/{id}/update-progress', [PostController::class,'updateProgress',])->name('materi.updateProgress')->middleware('auth');
 Route::post('/judul/materi', [MateriController::class,'store',])->middleware('admin');
-Route::put('/judul/materi/{id}', [MateriController::class, 'update'])->name('judul.materi.update')->middleware(['auth']);
-Route::delete('/judul/materi/{id}', [MateriController::class, 'destroy'])->name('judul.materi.destroy')->middleware(['auth']);
-// Route::resource('/layouts/post/{post:id}',PostinganController::class);
-
+// Route::put('/judul/materi/{id}', [MateriController::class, 'update'])->name('judul.materi.update')->middleware(['auth']);
+// Route::delete('/judul/materi', [MateriController::class, 'destroy'])->name('judul.materi.destroy')->middleware(['auth']);
+// Route::resource('/judul/materi',PostinganController::class);
+Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+Route::resource('/dasboard/materi',MateriController::class);
 // Route::get('/', function(){return view ('baru.index');});
 //  Route::get('/profile', function(){return view ('profile.edit');});
 Route::get('/layouts/post/{post:id}', [PostController::class,'show'])->middleware(['auth']);
@@ -85,6 +89,8 @@ Route::get('/dashboards', function(){return view ('dashboard.index');})->middlew
 Route::post('/update-first-active', [ActiveUtsController::class, 'updateFirstActive'])->name('update-first-active');
 Route::post('/uas-first-active', [ActiveUasController::class, 'updateuasFirstActive'])->name('uas-first-active');
 Route::post('/uts/selesai', [UtsController::class,'selesai',])->middleware('auth');
+
+
 
 Route::resource('/dashboard/post',DashboardPostController::class)->middleware('admin');
 Route::resource('/uts/mulai',StartUtsController::class )->middleware(['auth']);

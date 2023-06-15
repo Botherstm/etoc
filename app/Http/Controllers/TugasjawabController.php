@@ -87,9 +87,37 @@ class TugasjawabController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTugasjawabRequest $request, Tugasjawab $tugasjawab)
+    public function update(Request $request, Tugasjawab $tugasjawab)
     {
-        //
+        $rules=[
+            'text'=> 'required',
+            'pdf'=>'mimes:doc,docx,pdf',
+            'video'=>'mimes:mp4,ogx,oga,ogv,webm,ogg,mkv',
+            'gambar'=>'image|file|max:10024',
+        ];
+        $validateData = $request->validate($rules);
+        if($request->file('pdf')){
+            if($request->oldPdf){
+                Storage::delete($request->oldPdf);
+            }
+            $validateData['pdf'] = $request->file('pdf')->store('pdf');
+        }
+        if($request->file('gambar')){
+            $validateData['gambar'] = $request->file('gambar')->store('gambar');
+            if($request->oldGambar){
+                Storage::delete($request->oldGambar);
+            }
+        }
+        if($request->file('video')){
+            if($request->oldVideo){
+                Storage::delete($request->oldVideo);
+            }
+            $validateData['video'] = $request->file('video')->store('video');
+        }
+
+        Tugasjawab::where('id',$tugasjawab->id)->update($validateData);
+
+        return redirect()->back()->with('success', 'Jawaban updated successfully.');
     }
 
     /**
