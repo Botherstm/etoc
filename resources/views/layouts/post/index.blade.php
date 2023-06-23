@@ -210,7 +210,7 @@
                 cursor: not-allowed;
             }
 
-.form-container {
+        .form-container {
             width: 400px;
             margin: 0 auto;
             padding: 20px;
@@ -315,8 +315,8 @@
                 transform: rotate(360deg);
             }
         }
-            
-        
+
+
         </style>
         <div class="">
             @if (session('success'))
@@ -336,7 +336,7 @@
                 @endif
             <div class="container">
                 <div class="row">
-                    <h1>Daftar Sub Materi</h1>
+                    <h1>Daftar Materi</h1>
                     {{-- @if ($materi->count())
                         @foreach ( $materi as $po )
                                     @php
@@ -348,7 +348,7 @@
                                             $warningMessage = 'Anda belum membuka data sebelumnya.';
                                             $route = '#'; // Mengatur route ke "#" jika data belum dibuka
                                             $attributes = 'style="pointer-events: none; cursor: not-allowed;"'; // Mengatur atribut CSS untuk menonaktifkan tautan
-                                            
+
                                             }
                                     @endphp
                             <div class="col mb-4 fade-in">
@@ -360,14 +360,14 @@
                                         <div class="image-overlay"></div>
                                         <h2 class="image-caption">{{$po->judul}}</h2>
                                     </div>
-                                        
+
                                     </a>
                                     @else
                                     <div class="video-container">
                                     <video class=" img-fluid" src="{{ asset('storage/' . $po->video) }}" width="280" height="180" controls></video>
                                     <h2 class="video-caption">{{$po->judul}}</h2>
                                     </div>
-                                        
+
                                     @endif
                                     <div class="{{ $progress >= $po->id ? '' : 'not-allowed' }}">
                                         <a href="{{ $route }}" {!! $attributes !!}  id="my-link" onclick="return confirmLink(event, '{{ $warningMessage }}');">
@@ -378,7 +378,7 @@
                                         <p class="card-text ml-3 responsive-text" id="textContainer">{{ $po->pendek }}</p>
                                         <div class="justify-content-center d-flex ">
                                             <a href="{{ $route }}" class="{{ $progress >= $po->id ? '' : 'not-allowed' }}"><button type="button" class="btn btn-sm btn-outline-secondary responsive-button align-items-center {{ $progress >= $po->id ? '' : 'disabled' }}">detail</button></a>
-                                            
+
                                         </div>
                                         <div class="d-flex"><small class="text-muted responsive-text align-items-center py-2">{{ $po->created_at->diffForHumans() }}</small></div>
                                     </div>
@@ -393,19 +393,22 @@
                             <div class="col mb-4 fade-in">
                                 <div class="card shadow-sm">
                                     @if ($po->gambar)
-                                    <a href="/materi/{{$po->id}}" class="black-link">
-                                    <div class="image-container ">
-                                        <img class=" img-fluid " src="{{ asset('storage/' . $po->gambar) }}" width="280" height="180" alt="{{$po->judul}}">
-                                        <div class="image-overlay"></div>
-                                        <h2 class="image-caption">{{$po->materi->title}}</h2>
-                                    </div>
-                                    </a>
+                                        <a href="/materi/{{$po->id}}" class="black-link">
+                                        <div class="image-container ">
+                                            <img class=" img-fluid " src="{{ asset('storage/' . $po->gambar) }}" width="280" height="180" alt="{{$po->judul}}">
+                                            <div class="image-overlay"></div>
+                                            <h2 class="image-caption">{{$po->materi->title}}</h2>
+                                        </div>
+                                        </a>
+                                    @elseif ($po->video)
+                                        <div class="video-container">
+                                            <video class=" img-fluid" src="{{ asset('storage/' . $po->video) }}" width="280" height="180" controls></video>
+                                            <h2 class="video-caption">{{$po->materi->title}}</h2>
+                                        </div>
                                     @else
-                                    <div class="video-container">
-                                    <video class=" img-fluid" src="{{ asset('storage/' . $po->video) }}" width="280" height="180" controls></video>
-                                    <h2 class="video-caption">{{$po->materi->title}}</h2>
-                                    </div>
-                                        
+                                    <a href="/materi/{{$po->id}}" class="black-link text-dark text-decoration-none">
+                                        <h2>{{$po->materi->title}}</h2>
+                                        </a>
                                     @endif
                                     <div class="">
                                         <a href="/materi/{{$po->id}}"  id="my-link">
@@ -426,7 +429,7 @@
                         <p>belum ada sub materi dibuat</p>
                     @endif
         @if ($tugass->count())
-            <div class="question-container d-block">    
+            <div class="question-container d-block">
                 <div class="question" id="question">
                     <h3>Tugas :</h3>
                     @foreach ($tugass as $tugas)
@@ -488,9 +491,9 @@
                 </div>
             </div>
         @else
-            
+
         @endif
-    
+
         <!-- Modal pop-up untuk edit jawaban -->
 
 
@@ -523,7 +526,7 @@
                         </div>
                     @else
                     @endif
-                    
+
                     @if ($gambar->count())
                     <div class="form-group">
                         <label for="gambar">Gambar</label>
@@ -538,19 +541,19 @@
                 </form>
             </div>
         </div>
-        
+
             {{-- <button type="button" class="btn" onclick="submitForm()">Ya</button>
             <button type="button" class="btn" onclick="closeForm()">Tidak</button>
         </div> --}}
         <div class="spinner" id="spinner"></div>
     </div>
 
-    
 
-                        
+
+
 <style>
         /* Style for modal container */
-        
+
         /* Styling for modal container */
         .modal {
             display: none;
@@ -630,7 +633,7 @@
         }
 
         /* Styling for image, PDF, and video preview */
-        
+
         .image-preview-container,
         .pdf-preview-container,
         .video-preview-container {
@@ -661,7 +664,7 @@
             background-color: #5e04bd;
         }
     </style>
-        
+
 
         @if ($jawaban != null)
             <div class="form-popup" id="editForm">
@@ -689,7 +692,7 @@
                                 @enderror
                             </div>
                         @endif
-                        
+
                         @if ($jawaban->pdf)
                             <div class="form-group">
                                 <label for="pdf" class="form-label">Pdf</label>
@@ -725,7 +728,7 @@
                         </div>
 
                         @endif
-                        
+
 
                         <div class="form-group">
                             <button type="submit" class="btn">Update</button>
@@ -734,9 +737,9 @@
                 </div>
             </div>
         @else
-            
+
         @endif
-    
+
 
 
     <script>
@@ -784,13 +787,13 @@
             }
         }
 
-       
+
 
         // Function to open the form pop-up
         function openFormtugas() {
             document.getElementById("editForm").style.display = "block";
         }
-        
+
         // Function to close the form pop-up
         function closeFormtugas() {
             document.getElementById("editForm").style.display = "none";
@@ -830,7 +833,7 @@
     </script>
 
 
-        
+
         @push('styles')
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
         @endpush
@@ -850,7 +853,7 @@
                 imgPreview.src = oFREvent.target.result;
             }
         }
-                    
+
             function confirmLink(event, warningMessage) {
                 if (warningMessage) {
                     // Mencegah tautan diikuti secara otomatis
@@ -886,12 +889,12 @@
         <script>
                 document.addEventListener("DOMContentLoaded", function() {
                     var paragraphsr = document.getElementById("textContainer");
-                    
+
                     for (var i = 0; i < paragraphs.length; i++) {
                         var text = paragraphs[i].textContent;
                         var words = text.split(" ");
                         var limitedText = words.slice(0, 5).join(" ");
-                        
+
                         paragraphs[i].textContent = limitedText;
                     }
                 });

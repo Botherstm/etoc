@@ -51,14 +51,14 @@
                 @endif
 
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" >
-        <h1 class="h2">Edit Materi</h1>
+        <h1 class="h2">Edit Pertemuan</h1>
     </div>
     <div class="col-lg-8">
         <form method="POST" action="/dashboard/post/{{ $post->id}}" id="myForm" class="mb-5" enctype="multipart/form-data">
             @method('put')
             @csrf
             <div class="mb-3">
-                <label for="materi_id" class="form-label">Materi</label>
+                <label for="materi_id" class="form-label">Pertemuan</label>
                 <select class="form-select form-select-sm" name="materi_id">
                     @foreach ($materis as $materi)
                         @if (old('materi_id',$post->materi_id) == $materi->id)
@@ -69,7 +69,7 @@
                     @endforeach
                 </select>
             </div>
-            
+
             <div class="mb-3">
                 <label for="judul" class="form-label">Judul Materi</label>
                 <input type="text" class="form-control @error('judul')
@@ -94,13 +94,26 @@
                 </select>
             </div> --}}
 
-            <p>Download Materi<a href="{{ asset('storage/' . $post->pdf) }}"><div class="button-group btn btn-primary bg-light">
+            <p>Download pdf<a href="{{ asset('storage/' . $post->pdf) }}"><div class="button-group btn btn-primary bg-light">
                 DOWNLOAD !</div></a></p>
             <div class="form-group">
                 <label for="pdf">Masukan PDF materi :</label>
                     <input type="hidden" name="oldPdf" value="{{ $post->pdf }}">
                     <input type="file" class="form-control-file @error('pdf') is-invalid @enderror" id="pdf" name="pdf">
                 @error('pdf')
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+
+            <p>Download ppt<a href="{{ asset('storage/' . $post->ppt) }}"><div class="button-group btn btn-primary bg-light">
+                DOWNLOAD !</div></a></p>
+            <div class="form-group">
+                <label for="ppt">Masukan PPT materi :</label>
+                    <input type="hidden" name="oldPpt" value="{{ $post->ppt }}">
+                    <input type="file" class="form-control-file @error('ppt') is-invalid @enderror" id="ppt" name="ppt">
+                @error('ppt')
                     <div class="invalid-feedback">
                         {{ $message }}
                     </div>
@@ -149,7 +162,7 @@
                 loadingOverlay.style.display = "flex";
                 sidebarOverlay.style.display = "block";
 
-                
+
             });
         });
         const judul = document.querySelector('#judul');

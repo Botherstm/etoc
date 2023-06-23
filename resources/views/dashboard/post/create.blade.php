@@ -65,7 +65,7 @@
         <form method="POST" action="/dashboard/post" id="myForm" class="mb-5" enctype="multipart/form-data">
             @csrf
             <div class="mb-3">
-                <label for="materi_id" class="form-label">Judul Materi</label>
+                <label for="materi_id" class="form-label">Pertemuan</label>
                 <select class="form-select form-select-sm" name="materi_id">
                     @foreach ($materi as $mat)
                         @if (old('materi_id') == $mat->id)
@@ -77,7 +77,7 @@
                 </select>
             </div>
             <div class="mb-3">
-                <label for="judul" class="form-label">Judul Sub Materi</label>
+                <label for="judul" class="form-label">Judul Materi</label>
                 <input type="text" class="form-control @error('judul')
                     is-invalid
                 @enderror" id="judul" name="judul" required autofocus value="{{ old('judul') }}">
@@ -101,6 +101,15 @@
                 <label for="video">Masukan Video materi : </label>
                     <input type="file" class="form-control @error('video') is-invalid @enderror" id="video" name="video">
                 @error('video')
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+            <div class="form-group pt-3">
+                <label for="ppt">Masukan PPT materi : </label>
+                    <input type="file" class="form-control @error('ppt') is-invalid @enderror" id="ppt" name="ppt">
+                @error('ppt')
                     <div class="invalid-feedback">
                         {{ $message }}
                     </div>
@@ -160,7 +169,7 @@
         crossorigin=""></script>
 
     <script>
-        
+
         document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("myForm").addEventListener("submit", function(event) {
                 document.getElementById('myForm').submit();
@@ -173,7 +182,7 @@
                 loadingOverlay.style.display = "flex";
                 sidebarOverlay.style.display = "block";
 
-                
+
             });
         });
         // const judul = document.querySelector('#judul');\

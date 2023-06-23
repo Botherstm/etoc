@@ -58,7 +58,7 @@ video {
 
 section {
     padding: 20px;
-    margin-left:auto; 
+    margin-left:auto;
     text-align: center;
 }
 
@@ -91,11 +91,11 @@ footer {
     <div class="l-navbar" id="nav-bar">
         <nav class="nav">
             <div> <a href="#" class="nav_logo"> <i class='bx bx-layer nav_logo-icon'></i> <span class="nav_logo-name">Alwindi's Website</span> </a>
-                <div class="nav_list"> 
-                    <a href="#" class="nav_link active"> <i class="bi bi-arrow-right-circle-fill"></i> <span class="nav_name " @disabled(true)>{{ $post->judul }}</span> </a> 
-                    <a href="/posts/{{ $post->materi_id }}" class="nav_link "> <i class="bi bi-arrow-left-circle-fill"></i> <span class="nav_name">Kembali</span> </a> 
+                <div class="nav_list">
+                    <a href="#" class="nav_link active"> <i class="bi bi-arrow-right-circle-fill"></i> <span class="nav_name " @disabled(true)>{{ $post->judul }}</span> </a>
+                    <a href="/posts/{{ $post->materi_id }}" class="nav_link "> <i class="bi bi-arrow-left-circle-fill"></i> <span class="nav_name">Kembali</span> </a>
                 </div>
-            </div> 
+            </div>
             <a href="/logout" class="nav_link"> <i class='bx bx-log-out nav_icon'></i> <span class="nav_name">
                 <form action="/logout" method="POST">
                 @csrf
@@ -110,10 +110,7 @@ footer {
                 <h1 >{{$post->judul}}</h1>
             @if ($post->video)
             <video src="{{ asset('storage/' . $post->video) }}" controls></video>
-            @else
-                
             @endif
-                <video src="{{ asset('storage/' . $post->video) }}" controls></video>
             </header>
             @if ($post->isi)
             <section >
@@ -121,20 +118,18 @@ footer {
                 <p>{!! $post->isi !!}</p>
             </section>
             @else
-                
-            @endif
 
-            @if ($post->pdf)
+            @endif
             <footer>
-                <a href="{{ asset('storage/' . $post->pdf) }}" download class="download-button">Download Materi</a>
+                @if ($post->pdf)
+                <a href="{{ asset('storage/' . $post->pdf) }}" download class="download-button">Download PDF</a>
+                @endif
+                @if ($post->ppt)
+                    <a href="{{ asset('storage/' . $post->ppt) }}" download class="download-button">Download PPT</a>
+                @endif
             </footer>
-            @else
-                
-            @endif
 
-
-
-{{-- 
+{{--
             <div class=" col-lg-12 col-sm-12 position-relative ">
                 <div class="pt-4  position-relative row" style="max-width: 2000px; ">
                     <video width="50%"  height="25%" style="max-height: 2000px;"   class="" src="{{ asset('storage/' . $post->video) }}" frameborder="0"  allowfullscreen controls loop>Your browser does not support the video tag.</video>
@@ -153,7 +148,7 @@ footer {
 
 
 
-{{--     
+{{--
     <div class="container bg-light">
         <div class="row my-3 bg-light">
             <div class="col-lg-6 ml-8 justify-content-center bg-light">
@@ -177,7 +172,7 @@ footer {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function(event) {
-   
+
 const showNavbar = (toggleId, navId, bodyId, headerId) =>{
 const toggle = document.getElementById(toggleId),
 nav = document.getElementById(navId),
@@ -217,5 +212,5 @@ linkColor.forEach(l=> l.addEventListener('click', colorLink))
 </script>
 </id=>
 </html>
-    
+
 

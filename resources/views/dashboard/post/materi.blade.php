@@ -2,14 +2,14 @@
 
 @section('container')
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" >
-        <h1 class="h2">Edit Materi</h1>
+        <h1 class="h2">Edit Pertemuan</h1>
     </div>
     <div class="col-lg-8">
         <form method="POST" action="/dasboard/materi/{{$materi->id}}" class="mb-5" enctype="multipart/form-data">
             @method('put')
             @csrf
             <div class="mb-3">
-                <label for="title" class="form-label">Materi</label>
+                <label for="title" class="form-label">Pertemuan</label>
                 <input type="text" class="form-control @error('title')
                     is-invalid
                 @enderror" id="title" name="title" required autofocus value="{{ old('title', $materi->title) }}">

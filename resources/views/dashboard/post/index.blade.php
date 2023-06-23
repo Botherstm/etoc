@@ -72,9 +72,48 @@
     opacity: 1;
   }
 }
+.preview-container {
+            width: 100%;
+            height: 100px;
+            border: 1px solid #ccc;
+        }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+<script>
+    $(document).ready(function() {
+        var pdfjsLib = window['pdfjs-dist/build/pdf'];
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+
+        $('.preview-container').each(function() {
+            var container = this;
+            var pptFilePath = $(container).data('ppt');
+
+            pdfjsLib.getDocument(pptFilePath).promise.then(function(pdf) {
+                for (var pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+                    pdf.getPage(pageNumber).then(function(page) {
+                        var canvas = document.createElement('canvas');
+                        container.appendChild(canvas);
+                        var context = canvas.getContext('2d');
+
+                        var viewport = page.getViewport({ scale: 0.5 });
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+
+                        var renderContext = {
+                            canvasContext: context,
+                            viewport: viewport
+                        };
+
+                        page.render(renderContext);
+                    });
+                }
+            });
+        });
+    });
+</script>
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Daftar Materi</h1>
+        <h1 class="h2">Daftar Pertemuan</h1>
             <div class="row navbar-nav ml-auto nav-item px-3">
                 <form action="/dashboard/post">
                     <div class="input-group ">
@@ -92,14 +131,14 @@
             </div>
         @endif
     <div class="table-responsive col-lg-12">
-        <button class="btn btn-dark mb-2" onclick="openFormmateri()">Tambahkan Materi Baru</button>
+        <button class="btn btn-dark mb-2" onclick="openFormmateri()">Tambahkan Pertemuan Baru</button>
 
     <div class="table table-striped table-sm pb-5">
             <table>
             <thead class="table table-striped table-sm">
                 <tr class="slide-in-left">
                     <th scope="col">no</th>
-                    <th scope="col">Judul Materi</th>
+                    <th scope="col">Judul Pertemuan</th>
                     <th scope="col">Tindakan</th>
                 </tr>
             </thead>
@@ -124,19 +163,19 @@
 </div>
 
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Daftar Sub Materi</h1>
+        <h1 class="h2">Daftar Materi</h1>
     </div>
-        <a href="/dashboard/post/create" class="btn btn-dark mb-2">Tambahkan Sub Materi Baru</a>
+        <a href="/dashboard/post/create" class="btn btn-dark mb-2">Tambahkan Materi Baru</a>
 <div class="table table-striped table-sm">
-    
             <table class="table table-striped  table-sm">
             <thead>
                 <tr class="slide-in-left">
                 <th scope="col">no</th>
+                <th scope="col">Pertemuan</th>
                 <th scope="col">Materi</th>
-                <th scope="col">Sub Materi</th>
-                <th scope="col">Isi Materi</th>
+                <th scope="col">PDF Materi</th>
                 <th scope="col">Penjelasan</th>
+                <th scope="col">PowerPoint</th>
                 <th scope="col">Video</th>
                 <th scope="col">Tindakan</th>
                 </tr>
@@ -148,15 +187,28 @@
             <td>{{ $po->materi->title }}</td>
             <td>{{ $po->judul }}</td>
             <td>
-                <p><a href="{{ asset('storage/' . $po->pdf) }}"><button class="btn btn-primary">Download</button></a></p>
+               @if ($po->pdf)
+               <p><a href="{{ asset('storage/' . $po->pdf) }}"><button class="btn btn-outline-dark">Download</button></a></p>
+               @else
+
+               @endif
             </td>
             <td>{{ $po->pendek }} ....</td>
+            <td>@if ($po->ppt)
+                <p><a href="{{ asset('storage/' . $po->ppt) }}"><button class="btn btn-outline-dark">Download</button></a></p>
+            @else
+
+            @endif</td>
             <td>
+                @if ($po->video)
                 <video width="200" height="100"  class="mx-auto" src="{{ asset('storage/' . $po->video) }}" frameborder="0"  allowfullscreen controls></video>
+                @else
+
+                @endif
                 {{-- <iframe width="200" height="100"  class="mx-auto" src="{{ asset('storage/' . $po->video) }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe> --}}
             </td>
             <td>
-                <a href=""><i class=" p-1 mx-1 bi bi-eye-fill"></i></a>
+                {{-- <a href=""><i class=" p-1 mx-1 bi bi-eye-fill"></i></a> --}}
                 <a href="/dashboard/post/{{ $po->id }}/edit"><i class="bi bi-pencil-square text-success  p-1 mx-1"></i></i></a>
                 <form action="/dashboard/post/{{ $po->id }}" method="POST" class="d-inline">
                     @method('delete')
@@ -172,7 +224,7 @@
         <div id="myModal" class="modal ">
             <div class="modal-content col-md-6 ">
                 <span class="close" onclick="closeFormmateri()">&times;</span>
-                <h2>Tambah Judul Materi</h2>
+                <h2>Tambah Pertemuan</h2>
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul>
@@ -186,10 +238,9 @@
                 <form action="/judul/materi" method="post">
                     @csrf
                     <div class="form-group">
-                        <label for="end_time">Judul Materi</label>
                         <input type="text" name="title" id="title" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="submit" class="btn btn-dark">Simpan</button>
                 </form>
                 </div>
         </div>
@@ -214,4 +265,5 @@
             document.getElementById("myModal").style.display = "none";
         }
     </script>
+
 @endsection

@@ -24,7 +24,6 @@ class DashboardPostController extends Controller
         return view('dashboard.post.index',[
             'post'=>Post::orderBy('materi_id', 'asc')->get(),
             'materi'=>Materi::all(),
-
         ]);
     }
 
@@ -56,9 +55,13 @@ class DashboardPostController extends Controller
             'pdf'=>'mimes:doc,docx,pdf',
             'video'=>'mimes:mp4,ogx,oga,ogv,webm,ogg,mkv',
             'gambar'=>'image|file|max:6024',
+            'ppt'=>'mimes:pptx,ppts',
         ]);
         if($request->file('pdf')){
             $validateData['pdf'] = $request->file('pdf')->store('pdf');
+        }
+        if($request->file('ppt')){
+            $validateData['ppt'] = $request->file('ppt')->store('ppt');
         }
         if($request->file('gambar')){
             $validateData['gambar'] = $request->file('gambar')->store('gambar');
@@ -82,10 +85,10 @@ class DashboardPostController extends Controller
     {
         return view('dashboard.post.show',[
             'post'=> $post,
-            
+
         ]);
     }
-    
+
 
     /**
      * Show the form for editing the specified resource.
@@ -117,6 +120,7 @@ class DashboardPostController extends Controller
             'pdf'=>'mimes:doc,docx,pdf',
             'waktu'=>'max:255',
             'video'=>'mimes:mp4,ogx,oga,ogv,webm,ogg,mkv',
+            'ppt'=>'mimes:pptx,ppts',
             'gambar'=>'image|file|max:6024',
         ];
         $validateData = $request->validate($rules);
@@ -125,6 +129,12 @@ class DashboardPostController extends Controller
                 Storage::delete($request->oldPdf);
             }
             $validateData['pdf'] = $request->file('pdf')->store('pdf');
+        }
+        if($request->file('ppt')){
+            if($request->oldPpt){
+                Storage::delete($request->oldPpt);
+            }
+            $validateData['ppt'] = $request->file('ppt')->store('ppt');
         }
         if($request->file('gambar')){
             $validateData['gambar'] = $request->file('gambar')->store('gambar');
