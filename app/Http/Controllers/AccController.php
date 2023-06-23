@@ -15,6 +15,7 @@ class AccController extends Controller
     {
         return view('dashboard.mahasiswa.index',[
             'post'=>User::orderByRaw("is_admin DESC")->get(),
+            'users'=>User::all(),
         ]);
     }
 

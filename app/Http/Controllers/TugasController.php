@@ -72,7 +72,7 @@ class TugasController extends Controller
     {
         $tugas = Tugas::findOrFail($id);
         return view('dashboard.tugas.edit',[
-            'materi'=>Materi::all(),
+            'materis'=>Materi::all(),
             'tugas'=>$tugas
         ]);
     }
@@ -80,8 +80,9 @@ class TugasController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Tugas $tugas)
+    public function update(Request $request, $id)
     {
+        $tugas = Tugas::find($id);
         $rules=[
             'soal'=>'required|max:255',
             'materi_id'=> 'required',
@@ -108,7 +109,7 @@ class TugasController extends Controller
             }
             $validateData['video'] = $request->file('video')->store('video');
         }
-
+        
         Tugas::where('id',$tugas->id)->update($validateData);
         return redirect('/dashboard/tugas')->with('success', 'Tugas berhasil diperbarui.');
     }
@@ -116,12 +117,22 @@ class TugasController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Tugas $tugas)
+    public function destroy(Tugas $tugas,$id)
     {
+
+
+        $tugas = Tugas::findOrFail($id);
+        if($tugas->pdf){
+            Storage::delete($tugas->pdf);
+        }
+        if($tugas->video){
+                Storage::delete($tugas->video);
+        }if($tugas->gambar){
+                Storage::delete($tugas->gambar);
+        }
         $tugas->delete();
 
-        return redirect()->route('tugas.index')
-            ->with('success', 'Tugas berhasil dihapus.');
+        return redirect('/dashboard/tugas')->with('success', 'Tugas berhasil dihapus.');
     }
 
     public function toggleGambar(Request $request, Tugas $tugas)

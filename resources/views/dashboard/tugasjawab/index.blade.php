@@ -14,6 +14,15 @@
   height: auto;
 }
 </style>
+  @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">Daftar Jawaban Tugas</h1>
             <div class="row navbar-nav ml-auto nav-item px-3">
@@ -76,6 +85,13 @@
                                 ----
                             @endif
                         </td>
+                        <td>
+                        <form action="{{ route('tasks.destroy', $mat->id) }}" method="POST" class="d-inline">
+                            @method('delete')
+                            @csrf
+                            <button class="badge border-0" onclick="return confirm('Are You Sure?')"><i class="bi bi-x-circle-fill text-danger p-1 mx-1"></i></button>
+                        </form>
+                    </td>
                     </tr>
 
                 @endforeach

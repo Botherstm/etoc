@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('utsjawabs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
-            $table->foreignId('soal_id');
+            $table->json('soal_id');
             $table->json('jawaban');
             $table->timestamps();
         });

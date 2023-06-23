@@ -76,10 +76,53 @@ button[type="submit"] {
     cursor: pointer;
     transition: background-color 0.3s;
 }
-
 button[type="submit"]:hover {
     background-color: #555;
 }
+
+.modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 300px;
+    }
+
+    .modal-form .form-check {
+        margin-bottom: 10px;
+    }
+
+    .modal-footer {
+        text-align: right;
+    }
+
+    /* Close Button */
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
 </style>
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pb-2 mb-3 border-bottom">
         <h1 class="h2">Daftar Mahasiswa</h1>
@@ -90,7 +133,7 @@ button[type="submit"]:hover {
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
-            @if ($post->skip(1)->count())
+            @if ($post->count())
                 <div class="py-3 col-lg-12">
                 <form action="/dashboard/mahasiswa/delete/all" method="post" id="">
                     @csrf
@@ -104,8 +147,9 @@ button[type="submit"]:hover {
                         <tr class="slide-in-left">
                         <th scope="col">no</th>
                         <th scope="col">Nama Mahasiswa</th>
-                        <th scope="col">status & Tindakan</th>
+                        <th scope="col">Diterima</th>
                         <th scope="col">Admin</th>
+                        <th scope="col">Tindakan</th>
                         <th scope="col">Hapus Akun</th>
                         </tr>
                     </thead>
@@ -114,24 +158,22 @@ button[type="submit"]:hover {
                     <tr class="slide-in-left">
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $po->name }}</td>
-                    @if ($po->acc != true)
-                        <td>
-                            <a href="#" class="btn btn-warning" onclick="openForm()">Pending !</a>
-                        </td>
+
+                    <td>{{ $po->acc ? 'Ya' : 'Tidak' }}</td>
+                    @if ($po->is_admin != false)
+                        <td><button disabled class="btn btn-success">Admin</button></td>
                     @else
-                        <td>
-                            <a href="#" class="btn btn-success" onclick="openForm()">Diterima</a>
-                        </td>
+                        <td>Tidak</td>
                     @endif
-                    @if ($po->is_admin != true)
-                        <td>
-                            <a href="#" class="btn btn-outline-warning" onclick="openFormAdmin()">Bukan Admin</a>
-                        </td>
-                    @else
-                        <td>
-                            <a href="#" class="btn btn-success" onclick="openFormAdmin()">Admin</a>
-                        </td>
-                    @endif
+                    <td>
+                        <button type="button" class="btn btn-outline-dark" onclick="openAcceptModal({{ $po->id }})">
+                            Ubah Status Diterima
+                        </button>
+                        <button type="button" class="btn btn-outline-dark" onclick="openAdminModal({{ $po->id }})">
+                            Ubah Hak Admin
+                        </button>
+
+                    </td>
                     <td>
                         <form action="{{ route('users.destroy', $po->id) }}" method="POST" class="d-inline">
                             @method('delete')
@@ -146,6 +188,52 @@ button[type="submit"]:hover {
                 </table>
             </div>
 
+            @foreach ($users as $user)
+            <div id="adminModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeAdminModal()">&times;</span>
+                    <form id="adminForm" class="modal-form" method="POST" action="{{ route('users.updateAdmin', $user->id) }}">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-body">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox"  name="is_admin" id="is_admin">
+                                <label class="form-check-label" for="is_admin">
+                                    Hak Admin
+                                </label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" onclick="closeAdminModal()">Tutup</button>
+                            <button type="submit">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Accept Modal -->
+            <div id="acceptModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeAcceptModal()">&times;</span>
+                    <form id="acceptForm" class="modal-form" method="POST" action="{{ route('users.updateAccept', $user->id) }}">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-body">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="acc" id="acc" >
+                                <label class="form-check-label" for="acc">
+                                    Diterima
+                                </label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" onclick="closeAcceptModal()">Tutup</button>
+                            <button type="submit">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        @endforeach
                 <div id="myModal" class="modal justify-content-center">
                     <div class="modal-content col-md-6 ">
                         <span class="close" onclick="closeForm()">&times;</span>
@@ -153,7 +241,8 @@ button[type="submit"]:hover {
                         <form action="/dashboard/mahasiswa/{{$po->id}}" id="update_user" class="update_user" method="post">
                             @method('put')
                             @csrf
-                            <input type="text" name="acc" hidden id="acc" value="{{$po->is_admin}}">
+                            <input type="text" name="is_admin"id="is_admin" value="{{$po->is_admin}}">
+                            {{$po->id}}
                             <div class="form-group">
                                 <div class="dropdown">
                                 <div class="form-group">
@@ -198,6 +287,45 @@ button[type="submit"]:hover {
                 <p>Belum ada Data Mahasiswa</p>
             @endif
 
+
+    <script>
+        function openAdminModal(userId) {
+    var modal = document.getElementById("adminModal");
+    var form = document.getElementById("adminForm");
+
+    form.action = form.action.replace("{id}", userId);
+    modal.style.display = "block";
+    if (form.elements.is_admin.checked) {
+        modal.classList.add("centered");
+    } else {
+        modal.classList.remove("centered");
+    }
+}
+
+function closeAdminModal() {
+    var modal = document.getElementById("adminModal");
+    modal.style.display = "none";
+}
+
+function openAcceptModal(userId) {
+    var modal = document.getElementById("acceptModal");
+    var form = document.getElementById("acceptForm");
+
+    form.action = form.action.replace("{id}", userId);
+    modal.style.display = "block";
+
+    if (form.elements.acc.checked) {
+        modal.classList.add("centered");
+    } else {
+        modal.classList.remove("centered");
+    }
+}
+
+function closeAcceptModal() {
+    var modal = document.getElementById("acceptModal");
+    modal.style.display = "none";
+}
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.7/dist/sweetalert2.all.min.js"></script>
     <script>
         function confirmDelete() {
@@ -218,7 +346,7 @@ button[type="submit"]:hover {
 
         return false;
     }
-    function confirmupdate() {
+    function confirmadmin() {
         Swal.fire({
             title: 'Konfirmasi',
             text: 'Apakah Anda yakin akan mengubah status Akun menjadi admin/tidak ?',
@@ -230,14 +358,14 @@ button[type="submit"]:hover {
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById('update_user').submit();
+                document.getElementById('update_admin').submit();
             }
         });
 
         return false;
     }
 
-    function confirmadmin() {
+    function confirmupdate() {
         Swal.fire({
             title: 'Konfirmasi',
             text: 'Apakah Anda yakin akan mengubah status Akun ?',
@@ -249,7 +377,7 @@ button[type="submit"]:hover {
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById('update_admin').submit();
+                document.getElementById('update_user').submit();
             }
         });
 

@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -39,10 +40,25 @@ class Handler extends ExceptionHandler
     /**
      * Register the exception handling callbacks for the application.
      */
+    
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+      public function render($request, Throwable $exception)
+    {
+        if ($exception instanceof QueryException && $exception->getCode() === '23000') {
+            $errorMessage = $exception->getMessage();
+            if (strpos($errorMessage, 'posts_judul_unique') !== false) {
+                // Menangani kesalahan Duplicate entry for key 'posts_judul_unique'
+                return redirect()->back()->withInput()->withErrors([
+                    'judul' => 'Judul telah digunakan sebelumnya.'
+                ]);
+            }
+        }
+
+        return parent::render($request, $exception);
     }
 }

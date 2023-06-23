@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use App\Models\uas;
+use App\Models\Uas;
 use App\Http\Requests\StoreuasRequest;
 use App\Http\Requests\UpdateuasRequest;
 use App\Models\Lama_uas;
@@ -23,7 +23,7 @@ class UasController extends Controller
      */
     public function index(Request $request)
     {
-        
+
         $active = Uts::first();
         $uass = Uas::first();
         $actives= $active->active;

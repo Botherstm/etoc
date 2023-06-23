@@ -82,6 +82,7 @@ class DashboardPostController extends Controller
     {
         return view('dashboard.post.show',[
             'post'=> $post,
+            
         ]);
     }
     
@@ -96,6 +97,7 @@ class DashboardPostController extends Controller
     {
         return view('dashboard.post.edit',[
             'post'=> $post,
+            'materis' => Materi::all(),
         ]);
     }
 
@@ -109,6 +111,7 @@ class DashboardPostController extends Controller
     public function update(Request $request, Post $post)
     {
         $rules=[
+            'materi_id'=> 'required',
             'judul'=>'required|max:255',
             'isi'=> 'required',
             'pdf'=>'mimes:doc,docx,pdf',

@@ -15,6 +15,6 @@ class Tugas extends Model
     }
      public function author()
     {
-        return $this->belongsTo(Materi::class,'materi_id')->withDefault();
+        return $this->belongsTo(User::class,'user_id')->withDefault();
     }
 }

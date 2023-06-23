@@ -2,48 +2,67 @@
 
 @section('container')
 <style>
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
+
+#loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
         }
-        100% {
-            transform: rotate(360deg);
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            animation: spin 2s linear infinite;
         }
-    }
 
-    .loading-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-    }
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
 
-    .loading-spinner {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: 3px solid #fff;
-        border-top-color: transparent;
-        animation: spin 1s linear infinite;
-    }
+        #loading-text {
+            color: #fff;
+            font-size: 16px;
+            margin-top: 10px;
+        }
 
-    .loading-text {
-        color: #fff;
-        font-size: 18px;
-        margin-top: 20px;
+        #upload-progress {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      width: 0%;
+      height: 5px;
+      background-color: #007bff;
     }
 </style>
+            @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">Materi</h1>
     </div>
     <div class="col-lg-8">
-        <form method="POST" action="/dashboard/post" class="mb-5 videoForm" enctype="multipart/form-data">
+        <form method="POST" action="/dashboard/post" id="myForm" class="mb-5" enctype="multipart/form-data">
             @csrf
             <div class="mb-3">
                 <label for="materi_id" class="form-label">Judul Materi</label>
@@ -127,21 +146,36 @@
                 <button type="submit" class="btn btn-dark d-block justify-content-center">Tambah Materi</button>
             </div>
         </form>
-        <div id="loadingOverlay" class="loading-overlay">
-                <div class="loading-spinner"></div>
-                <p class="loading-text">Sedang mengupload data...</p>
+        <div id="loading-overlay">
+            <div class="spinner"></div>
+            <div id="loading-text">Sedang mengupload data...</div>
+            <div id="loading-text">Mohon tidak berpindah Tab</div>
         </div>
+        <div id="upload-progress"></div>
+
     </div>
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
         integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
         crossorigin=""></script>
+
     <script>
-        function showLoading() {
-            document.getElementById('loadingOverlay').style.display = 'flex';
-        }
-    </script>
-    <script>
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("myForm").addEventListener("submit", function(event) {
+                document.getElementById('myForm').submit();
+
+                var form = this;
+                var loadingOverlay = document.getElementById("loading-overlay");
+                var sidebarOverlay = document.getElementById("sidebar-overlay");
+
+                // Menampilkan loading overlay dan tulisan
+                loadingOverlay.style.display = "flex";
+                sidebarOverlay.style.display = "block";
+
+                
+            });
+        });
         // const judul = document.querySelector('#judul');\
         // judul.addEventListener('change', function(){
         //     fetch('/dashboard/post/checkSlug?judul='+ judul.value)

@@ -19,7 +19,7 @@ class Uas extends Model
     {
         return $this->hasMany(Uasjawab::class);
     }
-    
+
     public function scopeFiltersoaluts($query, array $filters)
     {
         $query->when($filters['search'] ?? false, function ($query, $search) {

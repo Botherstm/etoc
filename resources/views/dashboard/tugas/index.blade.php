@@ -173,7 +173,7 @@
             </div>
         @endif
     <div class="table-responsive col-lg-12">
-        <a href="/dashboard/tugas/create"><button class="btn btn-dark mb-2" >Tambahkan Materi Baru</button></a>
+        <a href="/dashboard/tugas/create"><button class="btn btn-dark mb-2" >Tambahkan Tugas Baru</button></a>
         
         @if ($tugas->count())
         <div class="table table-striped table-sm pb-5">
@@ -231,7 +231,7 @@
                         <td>
                             <a href="/dashboard/tugas/{{ $mat->id }}/edit"><button class="btn bg-transparent"><i class="bi bi-pencil-square text-success  p-1 mx-1"></i></button></a>
                             
-                            <form action="" method="POST" class="d-inline">
+                            <form action="/dashboard/tugas/{{ $mat->id }}" method="POST" class="d-inline">
                                 @method('delete')
                                 @csrf
                                 <button class="badge border-0" onclick="return confirm('Are You Sure?')"><i class="bi bi-x-circle-fill text-danger p-1 mx-1"></i></button>

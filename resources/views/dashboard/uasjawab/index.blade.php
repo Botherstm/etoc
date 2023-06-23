@@ -21,7 +21,7 @@
 
 
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Daftar Nilai Uts</h1>
+        <h1 class="h2">Daftar Nilai UAS</h1>
     </div>
         @if(session()->has('success'))
             <div class="alert alert-success col-lg-8" role="alert">
@@ -47,10 +47,10 @@
                 </thead>
                 <tbody>
                     @foreach ($post as $pu)
-                    
+
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>                
+                        <td>
                             {!! $pu->soal !!}
                         </td>
                         <td>
@@ -87,16 +87,17 @@
                             @csrf
                             <button class="badge border-0" onclick="return confirm('Apakah Yakin Untuk Me RESET Jawaban UTS?')"><i class="bi bi-pencil-square text-success  p-1 mx-1"></i></button>
                         </form> --}}
-                        @if ($hasil['nilai'] > 30)
+                        @if ($hasil['nilai'] > 70)
                             <button class="btn btn-success" disabled="disabled">Lulus</button>
-                        @elseif ($hasil['id'] > 1 &&  $hasil['nilai'] < 30)
+                        @elseif ($hasil['id'] > 1 &&  $hasil['nilai'] < 70)
                             <button class="btn btn-danger" disabled="disabled">Tidak Lulus !!</button>
-                        @elseif ($hasil['id'] > 1 &&  $hasil['nilai'] < 30)
+                        @elseif ($hasil['id'] > 1 &&  $hasil['nilai'] < 70)
                             <button class="btn btn-warning" disabled="disabled">ujian Pertama</button>
                         @else
-                            <a href="{{ route('user.removeUtsCompleteAt', ['id' => $hasil['id'] ]) }}" class="btn btn-warning" onclick="return confirm('Are you sure you want to remove the UTS Complete At field?')">Remidial !</a>
+                            <button class="btn btn-danger" disabled="disabled">Tidak Lulus!</button>
+                            {{-- <a href="{{ route('user.removeUtsCompleteAt', ['id' => $hasil['id'] ]) }}" class="btn btn-warning" onclick="return confirm('Are you sure you want to remove the UTS Complete At field?')">Remidial !</a> --}}
                         @endif
-                        
+
                 </td>
             </tr>
             @endforeach
@@ -120,7 +121,7 @@
             @endforeach --}}
             </tbody>
         </table>
-        
+
     </div>
 
     <script>

@@ -123,20 +123,18 @@ class TugasjawabController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Tugasjawab $tugasjawab)
+    public function destroy($id)
     {
-        if($tugasjawab->pdf){
-                Storage::delete($tugasjawab->pdf);
-            }
-        if($tugasjawab->video){
-                Storage::delete($tugasjawab->video);
-        }if($tugasjawab->gambar){
-                Storage::delete($tugasjawab->gambar);
+        $tugas = Tugasjawab::findOrFail($id);
+        if($tugas->pdf){
+            Storage::delete($tugas->pdf);
         }
-            // Cek apakah postingan yang dihapus adalah postingan yang sedang diakses oleh pengguna
-            // Perbarui progres pengguna menjadi 0 (tidak ada materi yang diakses)
-
-        Tugasjawab::destroy($tugasjawab->id);
+        if($tugas->video){
+                Storage::delete($tugas->video);
+        }if($tugas->gambar){
+                Storage::delete($tugas->gambar);
+        }
+        $tugas->delete();
         return redirect('/dashboard/tugasjawab')->with('danger', 'Jawaban telah dihapus!');
     }
 }

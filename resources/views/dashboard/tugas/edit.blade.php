@@ -11,7 +11,7 @@
                     </div>
                 @endif
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" >
-        <h1 class="h2">Edit Materi</h1>
+        <h1 class="h2">Edit Tugas</h1>
     </div>
     <div class="col-lg-8">
         <form method="POST" action="/dashboard/tugas/{{ $tugas->id}}" class="mb-5" enctype="multipart/form-data">
@@ -21,11 +21,11 @@
             <div class="mb-3">
                 <label for="materi_id" class="form-label">Materi</label>
                 <select class="form-select form-select-sm" name="materi_id">
-                    @foreach ($materi as $category)
-                        @if (old('category_id',$tugas->category_id) == $category->id)
-                        <option value="{{ $category->id }}" selected>{{ $category->title }}</option>
+                    @foreach ($materis as $materi)
+                        @if (old('materi_id',$tugas->materi_id) == $materi->id)
+                        <option value="{{ $materi->id }}" selected>{{ $materi->title }}</option>
                         @else
-                        <option value="{{ $category->id }}">{{ $category->title }}</option>
+                        <option value="{{ $materi->id }}">{{ $materi->title }}</option>
                         @endif
                     @endforeach
                 </select>
@@ -43,15 +43,14 @@
                 @enderror
             </div>
 
-            
-
-
-            <p>Download Materi<a href="{{ asset('storage/' . $tugas->pdf) }}"><div class="button-group btn btn-primary bg-light">
+            @if ($tugas->pdf)
+                <p>Download Materi<a href="{{ asset('storage/' . $tugas->pdf) }}"><div class="button-group btn btn-primary bg-light">
                 DOWNLOAD !</div></a></p>
+            @endif
             <div class="form-group">
                 <label for="pdf">Masukan PDF materi :</label>
                     <input type="hidden" name="oldPdf" value="{{ $tugas->pdf }}">
-                    <input type="file" class="form-control-file @error('pdf') is-invalid @enderror" id="pdf" name="pdf">
+                    <input type="file" class="form-control @error('pdf') is-invalid @enderror" id="pdf" name="pdf">
                 @error('pdf')
                     <div class="invalid-feedback">
                         {{ $message }}
@@ -59,11 +58,13 @@
                 @enderror
             </div>
 
-            <video width="400" height="200"  class="mx-auto" src="{{ asset('storage/' . $tugas->video) }}" frameborder="0"  allowfullscreen controls loop></video>
+            @if ($tugas->video)
+                <video width="400" height="200"  class="mx-auto" src="{{ asset('storage/' . $tugas->video) }}" frameborder="0"  allowfullscreen controls loop></video>
+            @endif
             <div class="form-group">
                 <label for="video">Masukan Video :</label>
                     <input type="hidden" name="oldVideo" value="{{ $tugas->video }}">
-                    <input type="file" class="form-control-file @error('video') is-invalid @enderror" id="video" name="video">
+                    <input type="file" class="form-control @error('video') is-invalid @enderror" id="video" name="video">
                 @error('video')
                     <div class="invalid-feedback">
                         {{ $message }}

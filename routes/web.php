@@ -49,13 +49,19 @@ Route::get('/posts/{materi_id}', [PostController::class, 'index'])->middleware([
 Route::resource('/dashboard/tugas', TugasController::class)->middleware(['auth']);
 Route::resource('/dashboard/tugasjawab', TugasjawabController::class)->middleware(['auth']);
 // routes/web.php
-Route::post('/dashboard/tugas', [TugasController::class, 'store'])->name('tugas.store')->middleware(['auth']);
+Route::post('/dashboard/tugas/store', [TugasController::class, 'store'])->name('tugas.store')->middleware(['auth']);
+// Route::post('/dashboard/tugas/destroy', [TugasController::class, 'destroy'])->name('tugas.destroy')->middleware(['auth']);
 
+Route::delete('/tasks/{id}', [TugasjawabController::class, 'destroy'])->name('tasks.destroy');
 Route::post('/tasks/store', [TugasjawabController::class, 'store'])->name('tasks.store')->middleware(['auth']);
 Route::get('/tugas/{tugas}/toggle-gambar', [TugasController::class, 'toggleGambar'])->name('tugas.toggle-gambar')->middleware(['auth']);
 Route::get('/tugas/{tugas}/toggle-video', [TugasController::class, 'toggleVideo'])->name('tugas.toggle-video')->middleware(['auth']);
 Route::get('/tugas/{tugas}/toggle-pdf', [TugasController::class, 'togglePDF'])->name('tugas.toggle-pdf')->middleware(['auth']);
 Route::get('/tugas/{tugas}/toggle-text', [TugasController::class, 'toggleText'])->name('tugas.toggle-text')->middleware(['auth']);
+
+
+Route::put('/users/{id}/admin', [UserController::class, 'updateAdmin'])->name('users.updateAdmin');
+Route::put('/users/{id}/accept', [UserController::class, 'updateAccept'])->name('users.updateAccept');
 
 Route::get('/materi/{id}', [PostController::class,'show',])
     ->middleware('auth', 'check.post.progress')
@@ -99,8 +105,16 @@ Route::resource('/uts',UtsController::class )->middleware(['auth']);
 Route::resource('/uas',UasController::class )->middleware(['auth']);
 Route::resource('/dashboard/uts',BuatsoalController::class );
 Route::resource('/dashboard/uas',BuatsoaluasController::class );
+
+
+
 Route::delete('/dashboard/mahasiswa/delete/all', [AccController::class, 'deleteAllExceptAdmin'])->name('users.deleteAllExceptAdmin');
 Route::resource('/dashboard/mahasiswa',AccController::class);
+Route::post('/users/{id}/update', [AccController::class, 'update'])->name('users.update');
+
+
+
+
 Route::resource('/nilai',UtsjawabController::class );
 Route::resource('/nilaiuas',UasjawabController::class);
 Route::post('/uts/jawab',[UtsjawabController::class ,'store'])->name('/uts/jawab');

@@ -103,4 +103,22 @@ class UserController extends Controller
         $user->delete();
         return redirect('/dashboard/mahasiswa')->with('success', 'Akun telah di Hapus!');
     }
+
+    public function updateAdmin(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        $user->is_admin = $request->has('is_admin');
+        $user->save();
+
+        return redirect()->back()->with('success', 'Status Akun Telah Diperbaharui');
+    }
+
+    public function updateAccept(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        $user->acc = $request->has('acc');
+        $user->save();
+
+        return redirect()->back()->with('success', 'Status Akun Telah Diperbaharui');
+    }
 }

@@ -80,6 +80,7 @@ class PostController extends Controller
     $post = Post::findOrFail($id);
     $posts = Post::where('materi_id', $id)->get();
     
+    
     return view('layouts.post.single', compact('post','posts'));
     // Kode untuk mengambil materi dari database berdasarkan ID
         // $materi = Post::findOrFail($id);
